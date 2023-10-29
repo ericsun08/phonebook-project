@@ -38,6 +38,7 @@ const ContactListItem: React.FC<Props> = ({contact}) => {
 
   const handleDelete = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>):void => {
     e.stopPropagation()
+    handleGetId(id)
     handleWarningModal({
         isWarning:true,
         warningMessage:`Are you sure want to delete ${full_name}?`
