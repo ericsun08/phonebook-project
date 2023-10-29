@@ -6,12 +6,13 @@ import 'react-initials-avatar/lib/ReactInitialsAvatar.css';
 import { MdOutlineModeEditOutline } from 'react-icons/md'
 import { UPDATE_CONTACT } from '../../graphql/useEditContact'
 import { UPDATE_CONTACT_PHONE } from '../../graphql/useEditPhone'
-import { useMutation } from '@apollo/client'
+import { useMutation, useLazyQuery } from '@apollo/client'
 import { ThreeDots } from 'react-loader-spinner'
 import { useGetId, useHandleSuccessModal, useHandleErrorModal } from '../../context/hook/app-hook';
 import { FormContainer, InputStyle } from '../add-contact-form/add-form-style';
 import { CancelButton, UpdateButton, PhoneListContainer } from './contact-detail-style';
 import Skeleton from 'react-loading-skeleton';
+import { GET_CONTACTS } from '../../graphql/useGetContacts';
 
 const ContactDetailComponent:React.FC = () => { 
     const [isEditName, setIsEditName] = useState<boolean>(false)
@@ -52,6 +53,8 @@ const ContactDetailComponent:React.FC = () => {
       ]
     })
 
+    const [getContacts] = useLazyQuery(GET_CONTACTS);
+
     const checkSpecialChar = (name:string):boolean => {
       const pattern = /^[A-Za-z\s]+$/
       return pattern.test(name)
@@ -61,21 +64,36 @@ const ContactDetailComponent:React.FC = () => {
         try {
           if(firstName && lastName){
             if(checkSpecialChar(firstName) && checkSpecialChar(lastName)){
-              const { data } = await update_contact({
-                variables: {
-                    id:contactId,
-                    _set:{
-                      first_name: firstName,
-                      last_name:lastName,
-                    }
+              const { data:NameExist } = await getContacts({
+                variables: { 
+                  where: { 
+                    first_name: { _like: `%${firstName}%` }, 
+                    last_name: { _like: `%${lastName}%` } 
+                  } 
                 }
               })
-              if(data){
-                  setIsEditName(false)
-                  handleSuccessModal({
-                    isSuccess:true,
-                    successMessage:'New name updated!'
-                  })
+              if(NameExist?.contact?.length === 0){
+                const { data } = await update_contact({
+                  variables: {
+                      id:contactId,
+                      _set:{
+                        first_name: firstName,
+                        last_name:lastName,
+                      }
+                  }
+                })
+                if(data){
+                    setIsEditName(false)
+                    handleSuccessModal({
+                      isSuccess:true,
+                      successMessage:'New name updated!'
+                    })
+                }
+              } else {
+                handleErrorModal({
+                  isError:true,
+                  errorMessage: 'Name already exist.'
+                })
               }
             } else {
               handleErrorModal({

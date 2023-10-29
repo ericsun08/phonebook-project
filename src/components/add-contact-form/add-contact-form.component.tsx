@@ -1,13 +1,11 @@
 import React, { useState, ChangeEvent } from 'react'
 import { css } from '@emotion/css'
-import { useMutation } from '@apollo/client'
+import { useMutation, useLazyQuery } from '@apollo/client'
 import { MdOutlineClose, MdAddCircleOutline } from 'react-icons/md'
 import { useSearch, useHandlePage, useHandleForm, useHandleContactOrForm, useHandleSuccessModal, useHandleErrorModal } from '../../context/hook/app-hook'
 import { FormContainer, InputStyle, AddPhone, AddContactButton} from './add-form-style'
-
 import { CREATE_CONTACT } from '../../graphql/useAddContact'
 import { GET_CONTACTS } from '../../graphql/useGetContacts'
-
 import { FaCircleXmark } from 'react-icons/fa6'
 import { ThreeDots } from 'react-loader-spinner'
 
@@ -62,6 +60,8 @@ const AddContactForm: React.FC = () => {
     setPhones([...tmpPhone])
   }
 
+  const [getContacts] = useLazyQuery(GET_CONTACTS);
+
   const checkSpecialChar = (name:string):boolean => {
     const pattern = /^[A-Za-z\s]+$/
     return pattern.test(name)
@@ -74,6 +74,15 @@ const AddContactForm: React.FC = () => {
     try{
       if(firstName && lastName && phonesNotEmpty){
         if(checkSpecialChar(firstName) && checkSpecialChar(lastName)){
+          const { data:NameExist } = await getContacts({
+            variables: { 
+              where: { 
+                first_name: { _like: `%${firstName}%` }, 
+                last_name: { _like: `%${lastName}%` } 
+              } 
+            }
+          })
+          if(NameExist?.contact?.length === 0){
             const { data } = await insert_contact({
               variables: {
                   first_name: firstName,
@@ -96,6 +105,12 @@ const AddContactForm: React.FC = () => {
               setLastName("")
               setPhones([initialPhone])
             }
+          } else {
+            handleErrorModal({
+              isError:true,
+              errorMessage: 'Name already exist.'
+            })
+          }
         } else {
           handleErrorModal({
             isError:true,
