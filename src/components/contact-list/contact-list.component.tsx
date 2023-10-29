@@ -31,7 +31,7 @@ const ContactList: React.FC = () => {
   const itemsPerPage:number = 10
 
   const { data, loading } = useQuery(GET_CONTACTS, {
-    variables: { where: { first_name: { _like:`%${search}%` } }, limit: itemsPerPage, offset:(currentPage - 1) * itemsPerPage, order_by: [{first_name: 'asc'}] },
+    variables: { where: { first_name: { _ilike:`%${search}%` } }, limit: itemsPerPage, offset:(currentPage - 1) * itemsPerPage, order_by: [{first_name: 'asc'}] },
     fetchPolicy: "network-only"  
   })
 

@@ -20,7 +20,7 @@ const FormModal:React.FC = () => {
             justify-content: center;
             align-items: center;
             display:${openForm ? 'flex' : 'none'};
-            ${minq[4]}{
+            ${minq[5]}{
               display:none;
             }
             ${maxq[0]}{

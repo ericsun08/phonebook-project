@@ -30,7 +30,7 @@ const AddContactForm: React.FC = () => {
 
   const [insert_contact, { loading }] = useMutation(CREATE_CONTACT, {
     refetchQueries: [
-      { query: GET_CONTACTS, variables: { where: { first_name: { _like:`%${search}%` } }, limit: itemsPerPage, offset:(currentPage-1) * itemsPerPage, order_by: [{first_name: 'asc'}] } }
+      { query: GET_CONTACTS, variables: { where: { first_name: { _ilike:`%${search}%` } }, limit: itemsPerPage, offset:(currentPage-1) * itemsPerPage, order_by: [{first_name: 'asc'}] } }
     ]
   })
 

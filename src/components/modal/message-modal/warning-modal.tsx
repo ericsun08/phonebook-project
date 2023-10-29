@@ -21,7 +21,7 @@ const WarningModal: React.FC = () => {
 
   const [deleteContact, { loading }] = useMutation(DELETE_CONTACT, {
     refetchQueries:[
-      { query: GET_CONTACTS, variables: { where: { first_name: { _like:`%${search}%` } }, limit: itemsPerPage, offset:(currentPage-1) * itemsPerPage, order_by: [{first_name: 'asc'}] } }
+      { query: GET_CONTACTS, variables: { where: { first_name: { _ilike:`%${search}%` } }, limit: itemsPerPage, offset:(currentPage-1) * itemsPerPage, order_by: [{first_name: 'asc'}] } }
     ]
   });
 
@@ -78,7 +78,7 @@ const WarningModal: React.FC = () => {
             <div className={css`margin-top:18px; margin-left:10px; margin-right:10px`}>
                 <span>{warningMessage}</span>
             </div>
-            <div className={css`margin-top:15px`}>
+            <div className={css`margin-top:5px`}>
                 <ModalCancelButton onClick={() => handleWarningModal({isWarning:false, warningMessage:''})}>
                     Cancel
                 </ModalCancelButton>
