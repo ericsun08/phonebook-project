@@ -6,7 +6,7 @@ import 'react-initials-avatar/lib/ReactInitialsAvatar.css';
 import { MdOutlineModeEditOutline } from 'react-icons/md'
 import { UPDATE_CONTACT } from '../../graphql/useEditContact'
 import { UPDATE_CONTACT_PHONE } from '../../graphql/useEditPhone'
-import { useMutation, useLazyQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { ThreeDots } from 'react-loader-spinner'
 import { useGetId, useHandleSuccessModal, useHandleErrorModal } from '../../context/hook/app-hook';
 import { FormContainer, InputStyle } from '../add-contact-form/add-form-style';
@@ -47,13 +47,16 @@ const ContactDetailComponent:React.FC = () => {
         ]
       })
     
-    const [update_contact_phone, { loading: phoneLoading }] = useMutation(UPDATE_CONTACT_PHONE, {
+    const [update_contact_phone, { loading: phoneLoading, error:updateError }] = useMutation(UPDATE_CONTACT_PHONE, {
       refetchQueries: [
         { query: GET_CONTACT_DETAIL, variables: { "id": contactId } }
       ]
     })
 
-    const [getContacts] = useLazyQuery(GET_CONTACTS);
+    const { data:NameExist } = useQuery(GET_CONTACTS, {
+      variables: { where: { first_name: { _eq:firstName}, last_name: { _eq:lastName} }},
+      fetchPolicy: "network-only"  
+    })
 
     const checkSpecialChar = (name:string):boolean => {
       const pattern = /^[A-Za-z\s]+$/
@@ -64,14 +67,6 @@ const ContactDetailComponent:React.FC = () => {
         try {
           if(firstName && lastName){
             if(checkSpecialChar(firstName) && checkSpecialChar(lastName)){
-              const { data:NameExist } = await getContacts({
-                variables: { 
-                  where: { 
-                    first_name: { _eq: firstName }, 
-                    last_name: { _eq: lastName } 
-                  } 
-                }
-              })
               if(NameExist?.contact?.length === 0){
                 const { data } = await update_contact({
                   variables: {
@@ -88,6 +83,12 @@ const ContactDetailComponent:React.FC = () => {
                       isSuccess:true,
                       successMessage:'New name updated!'
                     })
+                } 
+                if(updateError){
+                  handleErrorModal({
+                    isError:true,
+                    errorMessage: 'Phone no already exist.'
+                  })
                 }
               } else {
                 handleErrorModal({

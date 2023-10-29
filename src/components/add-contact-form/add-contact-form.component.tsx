@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent } from 'react'
 import { css } from '@emotion/css'
-import { useMutation, useLazyQuery } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { MdOutlineClose, MdAddCircleOutline } from 'react-icons/md'
 import { useSearch, useHandlePage, useHandleForm, useHandleContactOrForm, useHandleSuccessModal, useHandleErrorModal } from '../../context/hook/app-hook'
 import { FormContainer, InputStyle, AddPhone, AddContactButton} from './add-form-style'
@@ -60,7 +60,10 @@ const AddContactForm: React.FC = () => {
     setPhones([...tmpPhone])
   }
 
-  const [getContacts] = useLazyQuery(GET_CONTACTS);
+  const { data:NameExist } = useQuery(GET_CONTACTS, {
+    variables: { where: { first_name: { _eq:firstName}, last_name: { _eq:lastName} }},
+    fetchPolicy: "network-only"  
+  })
 
   const checkSpecialChar = (name:string):boolean => {
     const pattern = /^[A-Za-z\s]+$/
@@ -74,14 +77,7 @@ const AddContactForm: React.FC = () => {
     try{
       if(firstName && lastName && phonesNotEmpty){
         if(checkSpecialChar(firstName) && checkSpecialChar(lastName)){
-          const { data:NameExist } = await getContacts({
-            variables: { 
-              where: { 
-                first_name: { _eq: firstName }, 
-                last_name: { _eq: lastName } 
-              } 
-            }
-          })
+          console.log(firstName, lastName)
           if(NameExist?.contact?.length === 0){
             const { data } = await insert_contact({
               variables: {
