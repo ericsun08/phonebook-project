@@ -77,8 +77,8 @@ const AddContactForm: React.FC = () => {
           const { data:NameExist } = await getContacts({
             variables: { 
               where: { 
-                first_name: { _like: `%${firstName}%` }, 
-                last_name: { _like: `%${lastName}%` } 
+                first_name: { _eq: firstName }, 
+                last_name: { _eq: lastName } 
               } 
             }
           })

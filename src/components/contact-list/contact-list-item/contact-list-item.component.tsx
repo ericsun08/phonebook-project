@@ -36,7 +36,8 @@ const ContactListItem: React.FC<Props> = ({contact}) => {
     navigate(`/phonebook-project`)
   }
 
-  const handleDelete = ():void => {
+  const handleDelete = (e:React.MouseEvent<HTMLButtonElement, MouseEvent>):void => {
+    e.stopPropagation()
     handleWarningModal({
         isWarning:true,
         warningMessage:`Are you sure want to delete ${full_name}?`
@@ -86,7 +87,7 @@ const ContactListItem: React.FC<Props> = ({contact}) => {
                 <button className={css`cursor:pointer;margin-right: 5px; border:none;background-color:${selectedId === 0 ? '#FFFFFF' : selectedId === contactId ? '#e2e8f0' : '#FFFFFF'}`}>
                     <MdOutlineBookmarkAdd size={23}/>
                 </button>
-                <button onClick={handleDelete} className={css`cursor:pointer;border:none;background-color:${selectedId === 0 ? '#FFFFFF' : selectedId === contactId ? '#e2e8f0' : '#FFFFFF'}`}>
+                <button onClick={(e) => handleDelete(e)} className={css`cursor:pointer;border:none;background-color:${selectedId === 0 ? '#FFFFFF' : selectedId === contactId ? '#e2e8f0' : '#FFFFFF'}`}>
                     <FiTrash2 size={22}/>
                 </button>
             </div>

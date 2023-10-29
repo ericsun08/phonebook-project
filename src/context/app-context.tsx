@@ -111,8 +111,7 @@ interface ChildrenType {
 }
 
 export const AppProvider = ({children, ...initialState}:ChildrenType & stateType): ReactElement => {
-    const contextValue = useAppContext(initialState)
-    return <AppContext.Provider value={contextValue}>{children}</AppContext.Provider>
+    return <AppContext.Provider value={useAppContext(initialState)}>{children}</AppContext.Provider>
 }
 
 

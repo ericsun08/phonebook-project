@@ -27,7 +27,7 @@ const WarningModalContainer = css`
     margin:auto;
     position: relative;
     ${maxq[0]}{
-        min-height: 28%;
+        min-height: 30%;
       }
 `
 
