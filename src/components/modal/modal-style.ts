@@ -1,5 +1,6 @@
 import { css } from "@emotion/css";
 import styled from "@emotion/styled"
+import { maxq } from "../../common/style/style";
 
 const ModalContainer = css`
     width: 300px;
@@ -25,6 +26,9 @@ const WarningModalContainer = css`
     z-index: 100;
     margin:auto;
     position: relative;
+    ${maxq[0]}{
+        min-height: 28%;
+      }
 `
 
 const ModalContentContainer = css`

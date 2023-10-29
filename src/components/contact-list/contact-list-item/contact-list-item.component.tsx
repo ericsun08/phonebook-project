@@ -33,7 +33,7 @@ const ContactListItem: React.FC<Props> = ({contact}) => {
     })
     handleOpenForm(false)
     handleGetId(id)
-    navigate(`/contact-detail`)
+    navigate(`/phonebook-project`)
   }
 
   const handleDelete = ():void => {

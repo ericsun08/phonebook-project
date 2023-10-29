@@ -47,7 +47,7 @@ const App: React.FC = () => {
                         </div>
                         <div className={ContactDetailContainer}>
                             <Routes>
-                                <Route path='/contact-detail' element={<ContactDetail/>}/>
+                                <Route path='/phonebook-project' element={<ContactDetail/>}/>
                             </Routes>
                         </div>
                     </BrowserRouter>
